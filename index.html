@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mouse Spark Trail</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="brand">✨ SparkTrail</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#effects">Effects</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+    <div class="controls">
+      <button id="toggle-theme" aria-label="Toggle Theme">🌗</button>
+      <button id="toggle-sound" aria-label="Toggle Sound">🔊</button>
+    </div>
+  </nav>
+
+
+
+  <div class="cursor-follower"></div>
+
+  <!-- Spark Counter -->
+  <div class="counter" id="spark-counter">Sparks: 0</div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    © 2025 SparkTrail. Made with ❤️ Maheen Arif .
+  </footer>
+
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" aria-label="Back to top">⬆</button>
+
+  <!-- Sound -->
+  <audio id="spark-sound" src="https://cdn.pixabay.com/download/audio/2022/10/05/audio_26500d1b55.mp3?filename=click-124467.mp3" preload="auto"></audio>
+
+  <script>
+    // Spark effect
+    let sparkCount = 0;
+    let soundEnabled = true;
+    const sparkSound = document.getElementById("spark-sound");
+
+    const spark = (event) => {
+      let i = document.createElement('i');
+      i.style.left = event.pageX + 'px';
+      i.style.top = event.pageY + 'px';
+      i.style.scale = `${Math.random() * 1.5 + 0.5}`;
+      i.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+      i.style.borderRadius = `50%`;
+      const size = `${Math.random() * 5 + 2}px`;
+      i.style.width = size;
+      i.style.height = size;
+      i.style.setProperty('--x', getTransitionValue());
+      i.style.setProperty('--y', getTransitionValue());
+
+      document.body.appendChild(i);
+      setTimeout(() => {
+        document.body.removeChild(i);
+      }, 2000);
+
+      // Counter and sound
+      document.getElementById("spark-counter").textContent = "Sparks: " + (++sparkCount);
+      if (soundEnabled) {
+        sparkSound.currentTime = 0;
+        sparkSound.play();
+      }
+    };
+
+    const getTransitionValue = () => `${Math.random() * 400 - 200}px`;
+
+    document.addEventListener('mousemove', spark);
+
+    // Cursor follower
+    const follower = document.querySelector('.cursor-follower');
+    document.addEventListener('mousemove', (e) => {
+      follower.style.left = `${e.pageX}px`;
+      follower.style.top = `${e.pageY}px`;
+    });
+
+    // Theme toggle
+    document.getElementById("toggle-theme").onclick = () => {
+      document.body.classList.toggle("light-theme");
+    };
+
+    // Sound toggle
+    document.getElementById("toggle-sound").onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById("toggle-sound").textContent = soundEnabled ? "🔊" : "🔇";
+    };
+
+    // Back to top button logic with fade
+    const backToTopBtn = document.getElementById("backToTop");
+    function toggleBackToTop() {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    }
+    window.addEventListener('scroll', toggleBackToTop);
+    backToTopBtn.onclick = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Animate sections on scroll
+    const sections = document.querySelectorAll('.section');
+    function checkSectionsVisibility() {
+      const triggerBottom = window.innerHeight * 0.85;
+      sections.forEach(section => {
+        const sectionTop = section.getBoundingClientRect().top;
+        if (sectionTop < triggerBottom) {
+          section.classList.add('visible');
+        } else {
+          section.classList.remove('visible');
+        }
+      });
+    }
+    window.addEventListener('scroll', checkSectionsVisibility);
+    window.addEventListener('load', checkSectionsVisibility);
+
+    // Footer opacity on scroll
+    const footer = document.querySelector('.footer');
+    window.addEventListener('scroll', () => {
+      if(window.scrollY > 300){
+        footer.classList.add('scrolled');
+      } else {
+        footer.classList.remove('scrolled');
+      }
+    });
+  </script>
+</body>
+</html>
